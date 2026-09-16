@@ -1787,78 +1787,58 @@ $(document).ready(function() {
 
     
         
-        <form method='post' accept-charset="UTF-8" action='https://forms.yola.com/formservice/nb/8b79dbd1a7ec4641b860f44cabd46d3d/c205e71ae82846b3a1010513809f7960/4cb676411b0c48918db8da1ccc78720c/I02d80dcc3b1248b48fa22c15721341a8/'>
+        <form id="kontaktskjema" method="post" accept-charset="UTF-8" action="https://api.web3forms.com/submit">
+                <!-- Web3Forms: tilgangsnøkkelen er knyttet til tannlege@alsos.no og er laget for å stå synlig i HTML -->
+                <input type="hidden" name="access_key" value="WEB3FORMS_NOKKEL">
+                <input type="hidden" name="subject" value="Ny melding fra kontaktskjemaet på alsos.no">
+                <input type="hidden" name="from_name" value="alsos.no">
+                <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true" style="display:none">
 
-            
                 <div class='yola-form-field'>
-
-                                                                        <p class='label'><label for='yola_form_widget_I02d80dcc3b1248b48fa22c15721341a8_0'> Navn</label></p>
-                                            
-                                            <input id='yola_form_widget_I02d80dcc3b1248b48fa22c15721341a8_0' class='text' name='0<text>' type='text' value=''
-                             >
-                    
-                    <input type='hidden' name='0<label>' value=' Navn' />
-
+                    <p class='label'><label for='kontakt_navn'> Navn</label></p>
+                    <input id='kontakt_navn' class='text' name='Navn' type='text' required autocomplete='name'>
                 </div>
-
-            
                 <div class='yola-form-field'>
-
-                                                                        <p class='label'><label for='yola_form_widget_I02d80dcc3b1248b48fa22c15721341a8_1'> Telefon</label></p>
-                                            
-                                            <input id='yola_form_widget_I02d80dcc3b1248b48fa22c15721341a8_1' class='tel' name='1<text>' type='tel' value=''
-                             >
-                    
-                    <input type='hidden' name='1<label>' value=' Telefon' />
-
+                    <p class='label'><label for='kontakt_telefon'> Telefon</label></p>
+                    <input id='kontakt_telefon' class='tel' name='Telefon' type='tel' autocomplete='tel'>
                 </div>
-
-            
                 <div class='yola-form-field'>
-
-                                                                        <p class='label'><label for='yola_form_widget_I02d80dcc3b1248b48fa22c15721341a8_2'> E-post</label></p>
-                                            
-                                            <input id='yola_form_widget_I02d80dcc3b1248b48fa22c15721341a8_2' class='email' name='2<text>' type='email' value=''
-                             >
-                    
-                    <input type='hidden' name='2<label>' value=' E-post' />
-
+                    <p class='label'><label for='kontakt_epost'> E-post</label></p>
+                    <input id='kontakt_epost' class='email' name='email' type='email' required autocomplete='email'>
                 </div>
-
-            
                 <div class='yola-form-field'>
-
-                                                                        <p class='label'><label for='yola_form_widget_I02d80dcc3b1248b48fa22c15721341a8_3'>Melding</label></p>
-                                            
-                                            <input id='yola_form_widget_I02d80dcc3b1248b48fa22c15721341a8_3' class='text' name='3<text>' type='text' value=''
-                             >
-                    
-                    <input type='hidden' name='3<label>' value='Melding' />
-
+                    <p class='label'><label for='kontakt_melding'>Melding</label></p>
+                    <input id='kontakt_melding' class='text' name='Melding' type='text' required>
                 </div>
-
-            
-            <input type='hidden' name='redirect' value='https://www.alsos.no/?formI02d80dcc3b1248b48fa22c15721341a8Posted=true' />
-            <input type='hidden' name='locale' value='nb' />
-            <input type='hidden' name='redirect_fail' value='https://www.alsos.no/?formI02d80dcc3b1248b48fa22c15721341a8Posted=false' />
-            <input type='hidden' name='form_name' value='' />
-            <input type='hidden' name='site_name' value='Tannlege Alsos AS' />
-            <input type='hidden' name='wl_site' value='1' />
-                        <input type='hidden' name='destination' value='Z6M2-FA-q5TWrjeDAFRSEMapSkxa6XGq26ruXKOztL5A:zMpmaXcDrT0CPJdtywO8EB17p7K936x4B-O1uR36ssg=' />
-            
-            <div class="h-captcha-wrap">
-    <div class="h-captcha" data-sitekey="0ba3754b-558f-4fac-ba5a-a9bc4e61a6b2" data-locale="nb" id="hcaptcha-I02d80dcc3b1248b48fa22c15721341a8"></div>
-</div>
-
+                <p><input class='submit' type="submit" value="Sende inn" /></p>
+                <p id="kontakt_status" role="status" aria-live="polite" style="margin-top:12px"></p>
+            </form>
 <script>
-    window.formWidgetHcaptchaQueue = window.formWidgetHcaptchaQueue || [];
-    window.formWidgetHcaptchaQueue.push('hcaptcha-I02d80dcc3b1248b48fa22c15721341a8');
+(function () {
+  var form = document.getElementById('kontaktskjema');
+  var status = document.getElementById('kontakt_status');
+  var knapp = form.querySelector('input[type=submit]');
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    knapp.disabled = true;
+    status.textContent = 'Sender …';
+    fetch(form.action, {
+      method: 'POST',
+      headers: { 'Accept': 'application/json' },
+      body: new FormData(form)
+    }).then(function (r) { return r.json(); }).then(function (svar) {
+      if (svar.success) {
+        form.reset();
+        status.textContent = 'Takk! Meldingen er sendt, og vi tar kontakt så snart vi kan.';
+      } else {
+        throw new Error(svar.message);
+      }
+    }).catch(function () {
+      status.textContent = 'Meldingen ble ikke sendt. Prøv igjen, eller send e-post til tannlege@alsos.no.';
+    }).finally(function () { knapp.disabled = false; });
+  });
+})();
 </script>
-<script src="classes/components/Form/layouts/Default/hcaptcha_1001144.js"></script>
-<script src="https://js.hcaptcha.com/1/api.js?onload=hcaptchacb&render=explicit&hl=nb" async defer></script>
-                            <p><input class='submit' type="submit" value="Sende inn" /></p>
-            
-        </form>
 
     
     
