@@ -1826,15 +1826,22 @@ $(document).ready(function() {
       method: 'POST',
       headers: { 'Accept': 'application/json' },
       body: new FormData(form)
-    }).then(function (r) { return r.json(); }).then(function (svar) {
+    }).then(function (r) {
+      return r.text().then(function (tekst) {
+        try { return JSON.parse(tekst); }
+        catch (x) { throw new Error('HTTP ' + r.status + ': ' + tekst.slice(0, 200)); }
+      });
+    }).then(function (svar) {
       if (svar.success) {
         form.reset();
         status.textContent = 'Takk! Meldingen er sendt, og vi tar kontakt så snart vi kan.';
       } else {
         throw new Error(svar.message);
       }
-    }).catch(function () {
-      status.textContent = 'Meldingen ble ikke sendt. Prøv igjen, eller send e-post til tannlege@alsos.no.';
+    }).catch(function (feil) {
+      console.error('Kontaktskjema:', feil);
+      status.textContent = 'Meldingen ble ikke sendt. Prøv igjen, eller send e-post til tannlege@alsos.no.'
+        + (feil && feil.message ? ' (' + feil.message + ')' : '');
     }).finally(function () { knapp.disabled = false; });
   });
 })();
