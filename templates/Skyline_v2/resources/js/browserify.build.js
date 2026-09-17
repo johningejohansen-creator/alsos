@@ -1220,33 +1220,17 @@ MapView.prototype.getOriginLocation = function() {
 };
 
 MapView.prototype.renderPlaceMode = function() {
-  var placeModeUrl = BASEURL + 'place';
-  var urlObj = url.parse(placeModeUrl);
-
-  urlObj.query ={
-    key: this.mapOptions.embedAPIKey,
-    q: this.mapOptions.businessLocation
-  };
-
-  this.mapContext.mapSource = urlObj.format();
+  // Nøkkelfri Google-innbygging (erstatter Telenor/Yolas Embed API-nøkkel)
+  this.mapContext.mapSource = 'https://maps.google.com/maps?hl=no&output=embed&q=' +
+    encodeURIComponent(this.mapOptions.businessLocation);
   this.render();
 };
 
 MapView.prototype.renderDirectionsMode = function() {
-  var directionsModeUrl = BASEURL + 'directions';
-  var urlObj = url.parse(directionsModeUrl);
-
-  urlObj.query = {
-    key: this.mapOptions.embedAPIKey,
-    origin: this.mapOptions.originLocation,
-    destination: this.mapOptions.businessLocation
-  }
-
-  if(this.mapOptions.directionsMode) {
-    urlObj.query.mode = this.mapOptions.directionsMode;
-  }
-
-  this.mapContext.mapSource = urlObj.format();
+  // Nøkkelfri Google-innbygging med veibeskrivelse
+  this.mapContext.mapSource = 'https://maps.google.com/maps?hl=no&output=embed' +
+    '&saddr=' + encodeURIComponent(this.mapOptions.originLocation) +
+    '&daddr=' + encodeURIComponent(this.mapOptions.businessLocation);
   this.render();
 };
 
